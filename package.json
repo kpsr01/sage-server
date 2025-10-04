@@ -1,0 +1,13 @@
+{
+  "name": "transcript-server",
+  "version": "1.0.0",
+  "description": "Serverless transcript extraction service for Sage extension",
+  "main": "api/index.js",
+  "type": "module",
+  "keywords": ["youtube", "transcript", "vercel", "serverless"],
+  "author": "Pranav",
+  "license": "ISC",
+  "dependencies": {
+    "youtube-transcript-plus": "^1.1.1"
+  }
+}
