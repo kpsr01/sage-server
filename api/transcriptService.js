@@ -9,10 +9,9 @@ class TranscriptService {
 
       console.log(`[TranscriptService] Fetching transcript for video: ${videoId}`);
 
-      // Fetch transcript using youtube-transcript-plus with config
-      const transcriptArray = await fetchTranscript(videoId, {
-        lang: 'en'
-      });
+      // Fetch transcript using youtube-transcript-plus
+      // Don't specify language - let it fetch the default/available transcript
+      const transcriptArray = await fetchTranscript(videoId);
 
       console.log(`[TranscriptService] Raw result:`, transcriptArray ? `${transcriptArray.length} segments` : 'null');
 
@@ -43,9 +42,12 @@ class TranscriptService {
 
       console.log(`[TranscriptService] Success: ${transcriptText.length} characters, ${transcriptArray.length} segments`);
 
+      // Get language from the first segment if available
+      const language = transcriptArray[0]?.lang || 'en';
+
       return {
         data: transcriptText,
-        language: 'en',
+        language: language,
         isGenerated: true,
         totalEntries: transcriptArray.length,
         videoId: videoId,
