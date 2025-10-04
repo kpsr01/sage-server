@@ -9,9 +9,14 @@ class TranscriptService {
 
       console.log(`[TranscriptService] Fetching transcript for video: ${videoId}`);
 
+      // Use a realistic browser user-agent to avoid YouTube restrictions
+      const config = {
+        userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36'
+      };
+
       // Fetch transcript using youtube-transcript-plus
       // Don't specify language - let it fetch the default/available transcript
-      const transcriptArray = await fetchTranscript(videoId);
+      const transcriptArray = await fetchTranscript(videoId, config);
 
       console.log(`[TranscriptService] Raw result:`, transcriptArray ? `${transcriptArray.length} segments` : 'null');
 
