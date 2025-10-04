@@ -4,6 +4,9 @@
   "description": "Serverless transcript extraction service for Sage extension",
   "main": "api/index.js",
   "type": "module",
+  "engines": {
+    "node": ">=18.x"
+  },
   "keywords": ["youtube", "transcript", "vercel", "serverless"],
   "author": "Pranav",
   "license": "ISC",
