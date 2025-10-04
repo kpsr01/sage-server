@@ -8,7 +8,28 @@ class TranscriptService {
       }
 
       // Fetch transcript using youtube-transcript-plus
-      const transcriptArray = await fetchTranscript(videoId);
+      // Try multiple language options
+      let transcriptArray;
+      const languages = ['en', 'en-US', 'en-GB'];
+      
+      for (const lang of languages) {
+        try {
+          transcriptArray = await fetchTranscript(videoId, {
+            lang: lang
+          });
+          if (transcriptArray && transcriptArray.length > 0) {
+            break;
+          }
+        } catch (langError) {
+          // Try next language
+          continue;
+        }
+      }
+
+      // If no specific language worked, try without language specification
+      if (!transcriptArray || transcriptArray.length === 0) {
+        transcriptArray = await fetchTranscript(videoId);
+      }
 
       if (!transcriptArray || transcriptArray.length === 0) {
         return {
@@ -45,11 +66,18 @@ class TranscriptService {
     } catch (error) {
       const errorMessage = error.message || '';
       
+      console.error('Transcript fetch error:', {
+        videoId,
+        error: errorMessage,
+        errorType: error.name
+      });
+      
       if (errorMessage.includes('Transcript is disabled') || errorMessage.includes('disabled')) {
         return {
           error: 'Transcript is disabled for this video',
           videoId: videoId,
-          success: false
+          success: false,
+          details: errorMessage
         };
       } else if (errorMessage.includes('Could not find captions') || 
                  errorMessage.includes('No transcripts') ||
@@ -57,23 +85,35 @@ class TranscriptService {
         return {
           error: 'No transcript available for this video',
           videoId: videoId,
-          success: false
+          success: false,
+          details: errorMessage
         };
       } else if (errorMessage.includes('video ID') || errorMessage.includes('Invalid')) {
         return {
           error: 'Invalid video ID',
           videoId: videoId,
-          success: false
+          success: false,
+          details: errorMessage
+        };
+      } else if (errorMessage.includes('Too many requests')) {
+        return {
+          error: 'Rate limit exceeded. Please try again later.',
+          videoId: videoId,
+          success: false,
+          details: errorMessage
         };
       } else {
         return {
           error: 'Failed to fetch transcript',
           videoId: videoId,
-          success: false
+          success: false,
+          details: errorMessage
         };
       }
     }
   }
 }
+
+export { TranscriptService };
 
 export { TranscriptService };
